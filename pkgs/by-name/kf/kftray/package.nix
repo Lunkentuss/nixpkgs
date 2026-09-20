@@ -26,6 +26,7 @@ stdenv.mkDerivation (
   finalAttrs:
   let
     cargoHash = finalAttrs.cargoDeps.hash or "sha256-08k5hhMV2YRKNz/Zp+b0WhUVHYRlX7Rhb3xFQefOTw0=";
+    npmDepsHash = "sha256-LdhXmxdorRsMrX+hMtAbt9NiBW1opO2424bpj+J/c8E=";
     kftrayBinaries = rustPlatform.buildRustPackage {
       pname = "kftray-binaries";
       cargoBuildFlags = [
@@ -78,7 +79,7 @@ stdenv.mkDerivation (
       inherit (finalAttrs) pname version src;
       inherit pnpm;
       fetcherVersion = 4;
-      hash = "sha256-LdhXmxdorRsMrX+hMtAbt9NiBW1opO2424bpj+J/c8E=";
+      hash = npmDepsHash;
     };
 
     buildInputs = [
@@ -159,6 +160,11 @@ stdenv.mkDerivation (
     doCheck = true;
     strictDeps = true;
     __structuredAttrs = true;
+
+    passthru = {
+      inherit cargoHash npmDepsHash;
+      multiHashUpdateAttrs = ["cargoHash" "npmDepsHash"];
+    };
 
     meta = {
       description = "Kubectl port-forward manager";
